@@ -39,5 +39,13 @@ void init()
                 printf("Error while changing the directory!\n");
             }
         }
+        else if (strncmp(input, "history", 6) == 0)
+        {
+            if (strncmp(input, "history -c", 9) == 0)
+            {
+                printf("History -c\n");
+            }
+            printf("History\n");
+        }
     }
 }
