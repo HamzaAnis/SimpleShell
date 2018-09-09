@@ -2,7 +2,10 @@
 #include <stdlib.h>
 #include "shell.h"
 
-void init(int argc, char **argv)
+void init()
 {
-    printf("Hello world\n");
+    while (1)
+    {
+        printf("$ ");
+    }
 }

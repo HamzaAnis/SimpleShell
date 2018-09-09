@@ -1,5 +1,5 @@
 #ifndef SHELL_H
 
-void init(int argc, char **argv);
+void init();
 
 #endif //SHELL_H
