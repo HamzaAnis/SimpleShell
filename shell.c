@@ -3,6 +3,8 @@
 #include "shell.h"
 #include <string.h>
 #include <ctype.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 void init()
 {
@@ -11,7 +13,6 @@ void init()
         printf("$ ");
         char input[100] = "\0";
         fgets(input, sizeof(input), stdin);
-        printf("input: %s|\n", input);
         if (strncmp(input, "exit", 4) == 0)
         {
             return;
@@ -30,10 +31,13 @@ void init()
                 }
                 pathLength++;
             }
-            char *substr = (char *)malloc(pathLength * sizeof(char));
-            strncpy(substr, input + cdLength, pathLength - 1);
-            printf("Path length is %d\n", pathLength);
-            printf("Path is %s|\n", substr);
+            char *directoryPath = (char *)malloc(pathLength * sizeof(char));
+            strncpy(directoryPath, input + cdLength, pathLength - 1);
+            // printf("Path is %s\n", directoryPath);
+            if (chdir(directoryPath) == -1)
+            {
+                printf("Error while changing the directory!\n");
+            }
         }
     }
 }
