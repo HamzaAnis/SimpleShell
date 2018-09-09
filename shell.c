@@ -10,7 +10,7 @@ void init()
 {
     while (1)
     {
-        printf("$ ");
+        printf("$");
         char input[100] = "\0";
         fgets(input, sizeof(input), stdin);
         if (strncmp(input, "exit", 4) == 0)
