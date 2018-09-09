@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
-int main(int argc, char const *argv[])
+#include "shell.h"
+int main(int argc, char **argv)
 {
-    printf("Hello world");
+    init(argc, argv);
     return 0;
 }
