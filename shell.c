@@ -8,6 +8,8 @@
 
 void init()
 {
+    char *history[100];
+    int historyCount = 0;
     while (1)
     {
         printf("$");
@@ -38,14 +40,20 @@ void init()
             {
                 printf("Error while changing the directory!\n");
             }
+            history[historyCount] = input;
+            historyCount++;
         }
         else if (strncmp(input, "history", 6) == 0)
         {
             if (strncmp(input, "history -c", 9) == 0)
             {
-                printf("History -c\n");
+                historyCount = -1;
             }
-            printf("History\n");
+            int i;
+            for (i = 0; i < historyCount; i++)
+            {
+                printf("%d %s", i, history[i]);
+            }
         }
     }
 }
