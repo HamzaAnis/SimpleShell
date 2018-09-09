@@ -19,23 +19,21 @@ void init()
         else if (strncmp(input, "cd", 2) == 0)
         {
             int i = 0;
-            for (i = 0; i < 100; i++)
-            {
-                if (input[i] != '\0')
-                {
-                    printf("=> %c\n", input[i]);
-                }
-            }
-
-            int start = sizeof("cd");
-            for (i = start; input[i] != '\0'; i++)
+            int pathLength = 0;
+            int cdLength = sizeof("cd");
+            for (i = cdLength; input[i] != '\0'; i++)
             {
                 if (input[i] == 32)
                 {
                     printf("\nThe path can not have spaces in them!\n");
                     break;
                 }
+                pathLength++;
             }
+            char *substr = (char *)malloc(pathLength * sizeof(char));
+            strncpy(substr, input + cdLength, pathLength - 1);
+            printf("Path length is %d\n", pathLength);
+            printf("Path is %s|\n", substr);
         }
     }
 }
