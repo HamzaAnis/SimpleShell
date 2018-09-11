@@ -28,7 +28,7 @@ void init()
             {
                 if (input[i] == 32)
                 {
-                    printf("\nThe path can not have spaces in them!\n");
+                    printError("path can not have spaces in them");
                     break;
                 }
                 pathLength++;
@@ -38,7 +38,7 @@ void init()
             // printf("Path is %s\n", directoryPath);
             if (chdir(directoryPath) == -1)
             {
-                printf("Error while changing the directory!\n");
+                printError("invalid directory path");
             }
             history[historyCount] = input;
             historyCount++;
@@ -56,4 +56,8 @@ void init()
             }
         }
     }
+}
+void printError(char *message)
+{
+    printf("error: %s\n", message);
 }
