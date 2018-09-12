@@ -8,12 +8,11 @@
 
 void init()
 {
-    char *history[100];
-    int historyCount = 0;
     while (1)
     {
         printf("$");
-        char input[100] = "\0";
+        char input[inputSize] = "\0";
+        // memset(input, '\0', 100);
         fgets(input, sizeof(input), stdin);
         if (strncmp(input, "exit", 4) == 0)
         {
@@ -24,6 +23,7 @@ void init()
             int i = 0;
             int pathLength = 0;
             int cdLength = sizeof("cd");
+
             for (i = cdLength; input[i] != '\0'; i++)
             {
                 if (input[i] == 32)
@@ -40,8 +40,7 @@ void init()
             {
                 printError("invalid directory path");
             }
-            history[historyCount] = input;
-            historyCount++;
+            addToHistory(input);
         }
         else if (strncmp(input, "history", 6) == 0)
         {
@@ -49,10 +48,14 @@ void init()
             {
                 historyCount = -1;
             }
-            int i;
-            for (i = 0; i < historyCount; i++)
+            addToHistory(input);
+            printHistory();
+        }
+        else
+        {
+            if (!(strcmp(input, "\n") == 0))
             {
-                printf("%d %s", i, history[i]);
+                addToHistory(input);
             }
         }
     }
@@ -60,4 +63,22 @@ void init()
 void printError(char *message)
 {
     printf("error: %s\n", message);
+}
+
+void addToHistory(char input[])
+{
+    char *tempArray = (char *)malloc(inputSize * sizeof(char));
+    memcpy(tempArray, input, inputSize);
+    history[historyCount] = tempArray;
+    historyCount++;
+}
+
+void printHistory()
+{
+    int i;
+    for (i = 0; i < historyCount; i++)
+    {
+        printf("%d %s", i, history[i]);
+    }
+    printf("\n");
 }
