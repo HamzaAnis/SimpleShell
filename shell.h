@@ -9,4 +9,6 @@ void init();
 void printError(char *message);
 void addToHistory(char *input);
 void printHistory();
+void checkHistoryLimit();
+void launchRecentCommand();
 #endif //SHELL_H

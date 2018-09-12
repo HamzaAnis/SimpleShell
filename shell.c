@@ -10,6 +10,7 @@ void init()
 {
     while (1)
     {
+        checkHistoryLimit();
         printf("$");
         char input[inputSize] = "\0";
         // memset(input, '\0', 100);
@@ -51,14 +52,26 @@ void init()
             addToHistory(input);
             printHistory();
         }
+        else if (strncmp(input, "!!", 2) == 0)
+        {
+            launchRecentCommand();
+        }
         else
         {
+            //When the other command is entered
             if (!(strcmp(input, "\n") == 0))
             {
                 addToHistory(input);
             }
         }
     }
+}
+void launchRecentCommand()
+{
+    if (historyCount != -1)
+        printf("Recent command was %s\n", history[historyCount - 1]);
+    else
+        printError("there is no commands in the history");
 }
 void printError(char *message)
 {
@@ -81,4 +94,13 @@ void printHistory()
         printf("%d %s", i, history[i]);
     }
     printf("\n");
+}
+
+void checkHistoryLimit()
+{
+    if (historyCount == 100)
+    {
+        printf("info: 100 commands executed, removing oldest enteries\n");
+        historyCount = -1;
+    }
 }
