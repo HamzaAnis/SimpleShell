@@ -12,6 +12,7 @@ void runCommand(char input[]);
 void printError(char *message);
 void addToHistory(char *input);
 void printHistory();
+void printHistoryString(char *string);
 void checkHistoryLimit();
 void clearHistory();
 void launchRecentCommand();

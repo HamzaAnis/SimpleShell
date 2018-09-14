@@ -73,7 +73,7 @@ void runCommand(char input[])
         }
         char *string = (char *)malloc(stringLength * sizeof(char));
         strncpy(string, input + 1, stringLength);
-        // printf("The string to match is %s\n", string);
+        printHistoryString(string);
     }
     else
     {
@@ -90,6 +90,7 @@ void launchRecentCommand()
     if (historyCount != 0)
     {
         // printf("Recent command was %s\n", history[historyCount - 1]);
+        printf("$%s", history[historyCount - 1]);
         runCommand(history[historyCount - 1]);
     }
     else
@@ -125,7 +126,19 @@ void printHistory()
         printf("%d %s", commandNumber, history[i]);
         commandNumber++;
     }
-    printf("\n");
+}
+
+void printHistoryString(char *string)
+{
+    int i;
+    int commandNumber = initalCommandNumber;
+
+    for (i = 0; i < historyCount; i++)
+    {
+        if (strncmp(history[i], string, strlen(string)) == 0)
+            printf("%d %s", commandNumber, history[i]);
+        commandNumber++;
+    }
 }
 
 void checkHistoryLimit()
