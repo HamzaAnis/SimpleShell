@@ -17,5 +17,7 @@ void checkHistoryLimit();
 void clearHistory();
 void launchRecentCommand();
 void freeMemory(char **history);
+int validateCharArray(char *numberArray);
+void printLimitedHistory(int count);
 
 #endif //SHELL_H

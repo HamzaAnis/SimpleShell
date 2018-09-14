@@ -57,12 +57,22 @@ void runCommand(char input[])
             clearHistory();
             return;
         }
-        else if ((int)strlen(input) > (int)strlen("history"))
+        else if ((int)strlen(input) > (int)strlen("history") + 1)
         {
-            char number[5];
+            char numberArray[5];
             int historySize = strlen("history");
-            strncpy(number, input + historySize, strlen(input) - historySize - 1);
-            printf("A number is entered: %s\n", number);
+            strncpy(numberArray, input + historySize + 1, strlen(input) - historySize - 2);
+            // printf("A number is entered: %s\n", number);
+            if (validateCharArray(numberArray) == 1)
+            {
+                int count;
+                sscanf(numberArray, "%d", &count);
+                printf("The number is %d\n", count);
+            }
+            else
+            {
+                printError("the number is not valid");
+            }
             return;
         }
         addToHistory(input);
@@ -127,13 +137,21 @@ void clearHistory()
 
 void printHistory()
 {
-    int i;
-    int commandNumber = initalCommandNumber;
 
-    for (i = 0; i < historyCount; i++)
+    if (historyCount != 0)
     {
-        printf("%d %s", commandNumber, history[i]);
-        commandNumber++;
+        int i;
+        int commandNumber = initalCommandNumber;
+
+        for (i = 0; i < historyCount; i++)
+        {
+            printf("%d %s", commandNumber, history[i]);
+            commandNumber++;
+        }
+    }
+    else
+    {
+        printError("there is no commands in the history");
     }
 }
 
@@ -159,6 +177,18 @@ void printHistoryString(char *string)
     }
 }
 
+void printLimitedHistory(int count)
+{
+    int i;
+    int commandNumber = initalCommandNumber;
+
+    for (i = 0; i < historyCount; i++)
+    {
+        printf("%d %s", commandNumber, history[i]);
+        commandNumber++;
+    }
+}
+
 void checkHistoryLimit()
 {
     if (historyCount == historyLimit)
@@ -176,4 +206,17 @@ void freeMemory(char **history)
         if (history[i] != NULL)
             free(history[i]);
     }
+}
+
+int validateCharArray(char *numberArray)
+{
+    int i;
+    for (i = 0; numberArray[i] != '\0'; i++)
+    {
+        if (numberArray[i] < 48 || numberArray[i] > 57)
+        {
+            return 0;
+        }
+    }
+    return 1;
 }
