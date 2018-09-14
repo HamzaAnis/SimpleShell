@@ -5,6 +5,7 @@
 int historyLimit = 100;
 char *history[100];
 int historyCount = 0;
+int initalCommandNumber = 0;
 
 void init();
 void runCommand(char input[]);
@@ -12,6 +13,7 @@ void printError(char *message);
 void addToHistory(char *input);
 void printHistory();
 void checkHistoryLimit();
+void clearHistory();
 void launchRecentCommand();
 
 #endif //SHELL_H

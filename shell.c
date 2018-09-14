@@ -23,7 +23,7 @@ void runCommand(char input[])
 {
     if (strncmp(input, "exit", 4) == 0)
     {
-        return;
+        exit(0);
     }
     else if (strncmp(input, "cd", 2) == 0)
     {
@@ -53,7 +53,8 @@ void runCommand(char input[])
     {
         if (strncmp(input, "history -c", 9) == 0)
         {
-            historyCount = -1;
+            clearHistory();
+            return;
         }
         addToHistory(input);
         printHistory();
@@ -71,6 +72,7 @@ void runCommand(char input[])
         }
     }
 }
+
 void launchRecentCommand()
 {
     if (historyCount != 0)
@@ -81,6 +83,7 @@ void launchRecentCommand()
     else
         printError("there is no commands in the history");
 }
+
 void printError(char *message)
 {
     printf("error: %s\n", message);
@@ -94,19 +97,28 @@ void addToHistory(char input[])
     historyCount++;
 }
 
+void clearHistory()
+{
+    initalCommandNumber += historyCount;
+    historyCount = 0;
+}
+
 void printHistory()
 {
     int i;
+    int commandNumber = initalCommandNumber;
+
     for (i = 0; i < historyCount; i++)
     {
-        printf("%d %s", i, history[i]);
+        printf("%d %s", commandNumber, history[i]);
+        commandNumber++;
     }
     printf("\n");
 }
 
 void checkHistoryLimit()
 {
-    if (historyCount == 100)
+    if (historyCount == historyLimit)
     {
         printf("info: 100 commands executed, removing oldest enteries\n");
         historyCount = -1;
