@@ -23,6 +23,7 @@ void runCommand(char input[])
 {
     if (strncmp(input, "exit", 4) == 0)
     {
+        freeMemory();
         exit(0);
     }
     else if (strncmp(input, "cd", 2) == 0)
@@ -54,6 +55,11 @@ void runCommand(char input[])
         if (strncmp(input, "history -c", 9) == 0)
         {
             clearHistory();
+            return;
+        }
+        else if (sizeof(input) > sizeof("history"))
+        {
+            printf("A number is entered\n");
             return;
         }
         addToHistory(input);
@@ -147,5 +153,15 @@ void checkHistoryLimit()
     {
         printf("info: 100 commands executed, removing oldest enteries\n");
         historyCount = -1;
+    }
+}
+
+void freeMemory(void **history)
+{
+    int i;
+    for (i = 0; i < historyLimit; ++i)
+    {
+        if (history[i] != NULL)
+            free(history[i]);
     }
 }

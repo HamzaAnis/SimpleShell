@@ -1,9 +1,9 @@
 #ifndef SHELL_H
 
 #define inputSize 100
+#define historyLimit 100
 
-int historyLimit = 100;
-char *history[100];
+char *history[historyLimit];
 int historyCount = 0;
 int initalCommandNumber = 0;
 
@@ -16,5 +16,6 @@ void printHistoryString(char *string);
 void checkHistoryLimit();
 void clearHistory();
 void launchRecentCommand();
+void freeMemory(void **history);
 
 #endif //SHELL_H
