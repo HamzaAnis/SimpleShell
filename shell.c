@@ -67,7 +67,8 @@ void runCommand(char input[])
             {
                 int count;
                 sscanf(numberArray, "%d", &count);
-                printf("The number is %d\n", count);
+                // printf("The number is %d\n", count);
+                printLimitedHistory(count);
             }
             else
             {
@@ -179,10 +180,14 @@ void printHistoryString(char *string)
 
 void printLimitedHistory(int count)
 {
+    if (count > historyCount)
+    {
+        count = historyCount;
+    }
     int i;
     int commandNumber = initalCommandNumber;
 
-    for (i = 0; i < historyCount; i++)
+    for (i = 0; i < count; i++)
     {
         printf("%d %s", commandNumber, history[i]);
         commandNumber++;
