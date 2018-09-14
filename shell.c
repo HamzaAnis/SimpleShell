@@ -63,6 +63,18 @@ void runCommand(char input[])
     {
         launchRecentCommand();
     }
+    else if (strncmp(input, "!", 1) == 0)
+    {
+        int stringLength = 0;
+        int i = 0;
+        for (i = sizeof("!"); input[i] != '\0'; i++)
+        {
+            stringLength++;
+        }
+        char *string = (char *)malloc(stringLength * sizeof(char));
+        strncpy(string, input + 1, stringLength);
+        // printf("The string to match is %s\n", string);
+    }
     else
     {
         //When the other command is entered
