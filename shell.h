@@ -16,6 +16,6 @@ void printHistoryString(char *string);
 void checkHistoryLimit();
 void clearHistory();
 void launchRecentCommand();
-void freeMemory(void **history);
+void freeMemory(char **history);
 
 #endif //SHELL_H

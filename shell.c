@@ -23,7 +23,7 @@ void runCommand(char input[])
 {
     if (strncmp(input, "exit", 4) == 0)
     {
-        freeMemory();
+        freeMemory(history);
         exit(0);
     }
     else if (strncmp(input, "cd", 2) == 0)
@@ -57,9 +57,12 @@ void runCommand(char input[])
             clearHistory();
             return;
         }
-        else if (sizeof(input) > sizeof("history"))
+        else if ((int)strlen(input) > (int)strlen("history"))
         {
-            printf("A number is entered\n");
+            char number[5];
+            int historySize = strlen("history");
+            strncpy(number, input + historySize, strlen(input) - historySize - 1);
+            printf("A number is entered: %s\n", number);
             return;
         }
         addToHistory(input);
@@ -138,12 +141,21 @@ void printHistoryString(char *string)
 {
     int i;
     int commandNumber = initalCommandNumber;
-
+    int flag = 0;
     for (i = 0; i < historyCount; i++)
     {
         if (strncmp(history[i], string, strlen(string)) == 0)
+        {
             printf("%d %s", commandNumber, history[i]);
+            flag = 1;
+        }
         commandNumber++;
+    }
+    if (flag == 0)
+    {
+        char message[50];
+        sprintf(message, "%s do not matach any string in history", string);
+        printError(message);
     }
 }
 
@@ -156,7 +168,7 @@ void checkHistoryLimit()
     }
 }
 
-void freeMemory(void **history)
+void freeMemory(char **history)
 {
     int i;
     for (i = 0; i < historyLimit; ++i)
