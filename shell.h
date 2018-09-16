@@ -19,5 +19,6 @@ void launchRecentCommand();
 void freeMemory(char **history);
 int validateCharArray(char *numberArray);
 void printLimitedHistory(int count);
-
+int isExecutable(char *fielPath);
+void removeNewlineTrailing(char *string);
 #endif //SHELL_H

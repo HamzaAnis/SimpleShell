@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <pwd.h>
 
 void init()
 {
@@ -97,9 +98,16 @@ void runCommand(char input[])
     }
     else
     {
+        removeNewlineTrailing(input);
+        if (isExecutable(input) == 1)
+        {
+            printf("This is an executable!\n");
+            return;
+        }
         //When the other command is entered
         if (!(strcmp(input, "\n") == 0))
         {
+            printf("This is not an executable!\n");
             addToHistory(input);
         }
     }
@@ -224,4 +232,20 @@ int validateCharArray(char *numberArray)
         }
     }
     return 1;
+}
+
+int isExecutable(char *filePath)
+{
+    printf("Checking %s\n", filePath);
+    if ((access(filePath, X_OK) == 0) && (access(filePath, R_OK) == 0))
+        return 1;
+    else
+        return 0;
+}
+
+void removeNewlineTrailing(char *string)
+{
+    int newLine = strlen(string) - 1;
+    if (string[newLine] == '\n')
+        string[newLine] = '\0';
 }
