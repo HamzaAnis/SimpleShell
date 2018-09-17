@@ -22,6 +22,6 @@ int validateCharArray(char *numberArray);
 void printLimitedHistory(int count);
 int isExecutable(char *fielPath);
 void removeNewlineTrailing(char *string);
-void launchExecutable(char *executablePath);
-
+void launchExecutable(char *executablePath, char **args);
+char **getArguments(char *input);
 #endif //SHELL_H

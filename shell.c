@@ -100,10 +100,11 @@ void runCommand(char input[])
     else
     {
         removeNewlineTrailing(input);
-        if (isExecutable(input) == 1)
+        char **args = getArguments(input);
+        if (isExecutable(args[0]) == 1)
         {
             // printf("This is an executable!\n");
-            launchExecutable(input);
+            launchExecutable(args[0], args);
             return;
         }
         //When the other command is entered
@@ -250,7 +251,7 @@ void removeNewlineTrailing(char *string)
         string[newLine] = '\0';
 }
 
-void launchExecutable(char *executablePath)
+void launchExecutable(char *executablePath, char **args)
 {
     int pid;
     pid = fork();
@@ -261,7 +262,7 @@ void launchExecutable(char *executablePath)
     }
     else if (pid == 0)
     {
-        execv(executablePath, (char *[]){"", NULL});
+        execv(executablePath, args);
         printError("can not execute binary");
         exit(EXIT_FAILURE);
     }
@@ -281,7 +282,7 @@ void launchExecutable(char *executablePath)
     }
 }
 
-char **getargs(char *input)
+char **getArguments(char *input)
 {
     char *token;
     char **args = malloc(sizeof(char *) * maxArgument);
@@ -296,6 +297,7 @@ char **getargs(char *input)
 
     while (token != NULL)
     {
+        printf("Token is %s\n", token);
         args[count++] = token;
         if (count == maxArgument)
             break;
