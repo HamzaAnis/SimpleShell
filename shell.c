@@ -4,6 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <pwd.h>
 
@@ -101,13 +102,13 @@ void runCommand(char input[])
         removeNewlineTrailing(input);
         if (isExecutable(input) == 1)
         {
-            printf("This is an executable!\n");
+            // printf("This is an executable!\n");
+            launchExecutable(input);
             return;
         }
         //When the other command is entered
         if (!(strcmp(input, "\n") == 0))
         {
-            printf("This is not an executable!\n");
             addToHistory(input);
         }
     }
@@ -207,7 +208,7 @@ void checkHistoryLimit()
     if (historyCount == historyLimit)
     {
         printf("info: 100 commands executed, removing oldest enteries\n");
-        historyCount = -1;
+        clearHistory();
     }
 }
 
@@ -236,7 +237,6 @@ int validateCharArray(char *numberArray)
 
 int isExecutable(char *filePath)
 {
-    printf("Checking %s\n", filePath);
     if ((access(filePath, X_OK) == 0) && (access(filePath, R_OK) == 0))
         return 1;
     else
@@ -248,4 +248,60 @@ void removeNewlineTrailing(char *string)
     int newLine = strlen(string) - 1;
     if (string[newLine] == '\n')
         string[newLine] = '\0';
+}
+
+void launchExecutable(char *executablePath)
+{
+    int pid;
+    pid = fork();
+    if (pid < 0)
+    {
+        printError("forking failed");
+        return;
+    }
+    else if (pid == 0)
+    {
+        execv(executablePath, (char *[]){"", NULL});
+        printError("can not execute binary");
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        int wStatus;
+        int status;
+        while ((wStatus = wait(&status)) != -1 &&
+               wStatus != pid)
+        {
+        }
+        if (wStatus == -1)
+        {
+            printError("");
+            perror(NULL);
+        }
+    }
+}
+
+char **getargs(char *input)
+{
+    char *token;
+    char **args = malloc(sizeof(char *) * maxArgument);
+
+    if (!args)
+    {
+        printError("malloc failed");
+    }
+
+    token = strtok(input, " ");
+    int count = 0;
+
+    while (token != NULL)
+    {
+        args[count++] = token;
+        if (count == maxArgument)
+            break;
+        token = strtok(NULL, " ");
+    }
+    args[count] = NULL;
+
+    return args;
 }

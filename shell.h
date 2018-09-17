@@ -2,6 +2,7 @@
 
 #define inputSize 100
 #define historyLimit 100
+#define maxArgument 5
 
 char *history[historyLimit];
 int historyCount = 0;
@@ -21,4 +22,6 @@ int validateCharArray(char *numberArray);
 void printLimitedHistory(int count);
 int isExecutable(char *fielPath);
 void removeNewlineTrailing(char *string);
+void launchExecutable(char *executablePath);
+
 #endif //SHELL_H
