@@ -5,8 +5,8 @@
 #define maxArgument 5
 
 char *history[historyLimit];
-int historyCount = 0;
-int initalCommandNumber = 0;
+extern int historyCount;
+extern int initalCommandNumber;
 
 void init();
 void runCommand(char input[]);
