@@ -17,6 +17,7 @@ void init()
         char input[inputSize] = "\0";
         // memset(input, '\0', 100);
         fgets(input, sizeof(input), stdin);
+        removeNewlineTrailing(input);
         runCommand(input);
     }
 }
@@ -52,7 +53,7 @@ void runCommand(char input[])
         }
         addToHistory(input);
     }
-    else if (strncmp(input, "history", 6) == 0)
+    else if (strncmp(input, "history", 7) == 0)
     {
         if (strncmp(input, "history -c", 9) == 0)
         {
@@ -94,19 +95,16 @@ void runCommand(char input[])
             stringLength++;
         }
         char *string = (char *)malloc(stringLength * sizeof(char));
-        strncpy(string, input + 1, stringLength);
+        strncpy(string, input + 1, stringLength + 1);
+        string[stringLength + 1] = '\0';
         printHistoryString(string);
     }
     else
     {
+        addToHistory(input);
         removeNewlineTrailing(input);
-        char **args = getArguments(input);
-        if (isExecutable(args[0]) == 1)
-        {
-            // printf("This is an executable!\n");
-            launchExecutable(args[0], args);
-            return;
-        }
+        commandsExecute(input);
+        return;
         //When the other command is entered
         if (!(strcmp(input, "\n") == 0))
         {
@@ -120,11 +118,11 @@ void launchRecentCommand()
     if (historyCount != 0)
     {
         // printf("Recent command was %s\n", history[historyCount - 1]);
-        printf("$%s", history[historyCount - 1]);
+        printf("$%s\n", history[historyCount - 1]);
         runCommand(history[historyCount - 1]);
     }
     else
-        printError("there is no commands in the history");
+        printError("there is no commands in the history\n");
 }
 
 void printError(char *message)
@@ -156,7 +154,7 @@ void printHistory()
 
         for (i = 0; i < historyCount; i++)
         {
-            printf("%d %s", commandNumber, history[i]);
+            printf("%d %s\n", commandNumber, history[i]);
             commandNumber++;
         }
     }
@@ -175,7 +173,7 @@ void printHistoryString(char *string)
     {
         if (strncmp(history[i], string, strlen(string)) == 0)
         {
-            printf("%d %s", commandNumber, history[i]);
+            printf("%d %s\n", commandNumber, history[i]);
             flag = 1;
         }
         commandNumber++;
@@ -183,7 +181,7 @@ void printHistoryString(char *string)
     if (flag == 0)
     {
         char message[50];
-        sprintf(message, "%s do not matach any string in history", string);
+        sprintf(message, "%s do not match any string in history", string);
         printError(message);
     }
 }
@@ -199,7 +197,7 @@ void printLimitedHistory(int count)
 
     for (i = 0; i < count; i++)
     {
-        printf("%d %s", commandNumber, history[i]);
+        printf("%d %s\n", commandNumber, history[i]);
         commandNumber++;
     }
 }
@@ -250,60 +248,118 @@ void removeNewlineTrailing(char *string)
     if (string[newLine] == '\n')
         string[newLine] = '\0';
 }
-
-void launchExecutable(char *executablePath, char **args)
+void getCommands(struct commandLine *cmdL, char *input)
 {
-    int pid;
+    struct command *pct = NULL;
+    char *command;
+    int loc = 0;
+    command = strtok(input, "|");
+    while (command != NULL)
+    {
+        char *token;
+        loc = loc + strlen(command) + 1;
+
+        struct command *cmd = (struct command *)calloc(1, sizeof(struct command));
+        if (cmdL->head == NULL)
+        {
+            cmdL->head = cmd;
+            pct = cmd;
+        }
+        else
+        {
+            pct->nextCommand = cmd;
+            pct = cmd;
+        }
+        // printf("Command is %s\n", command);
+        token = strtok(command, " ");
+        while (token != NULL)
+        {
+            // printf("Token is %s\n", token);
+            cmd->args[cmd->count] = (char *)malloc(strlen(token) + 1);
+            strcpy(cmd->args[cmd->count], token);
+            (cmd->count)++;
+            token = strtok(NULL, " ");
+        }
+        (cmdL->count)++;
+        command = strtok(input + loc, "|");
+    }
+}
+void commandsExecute(char *input)
+{
+    int i = 0;
+    int *fd = NULL;
+    struct commandLine *cmdL = (struct commandLine *)calloc(1, sizeof(struct commandLine));
+    struct command *cmd = NULL;
+    getCommands(cmdL, input);
+    // printf("Count was %d\n", cmdL->count);
+    if (cmdL->count > 1)
+        fd = (int *)malloc(2 * sizeof(int) * (cmdL->count - 1));
+    cmd = cmdL->head;
+    for (i = 0; i < cmdL->count - 1; i++)
+    {
+        pipe(fd + 2 * i);
+    }
+    for (i = 0; i < cmdL->count; i++)
+    {
+        launchExecutable(cmd, fd, i, cmdL->count);
+        cmd = cmd->nextCommand;
+        dup2(dup(0), 0);
+        dup2(dup(1), 1);
+    }
+    if (fd != NULL)
+        free(fd);
+    cmd = cmdL->head;
+    while (cmd != NULL)
+    {
+        int i;
+        struct command *cmdArgs = cmd;
+        for (i = 0; i < cmdArgs->count; i++)
+        {
+            free(cmdArgs->args[i]);
+        }
+        cmd = cmdArgs->nextCommand;
+        free(cmdArgs);
+    }
+    free(cmdL);
+}
+
+void launchExecutable(struct command *cmd, int *fd, int index, int count)
+{
+    int pid = 0;
     pid = fork();
     if (pid < 0)
     {
-        printError("forking failed");
         return;
     }
     else if (pid == 0)
     {
-        execv(executablePath, args);
-        printError("can not execute binary");
-        exit(EXIT_FAILURE);
+        int i;
+        for (i = 0; i < 2 * (count - 1); i++)
+        {
+            if (i == 2 * (index - 1))
+            {
+                dup2(fd[i], 0);
+            }
+            else if (i == 2 * index + 1)
+            {
+                dup2(fd[i], 1);
+            }
+            close(fd[i]);
+        }
+        execv(cmd->args[0], cmd->args);
     }
     else
     {
-        int wStatus;
-        int status;
-        while ((wStatus = wait(&status)) != -1 &&
-               wStatus != pid)
+        if ((fd != NULL) && (2 * index + 1 < 2 * (count - 1)))
+        {
+            close(fd[2 * index + 1]);
+        }
+        if ((fd != NULL) && (2 * (index - 1) >= 0))
+        {
+            close(fd[2 * (index - 1)]);
+        }
+        while (pid != waitpid(pid, NULL, WUNTRACED))
         {
         }
-        if (wStatus == -1)
-        {
-            printError("");
-            perror(NULL);
-        }
     }
-}
-
-char **getArguments(char *input)
-{
-    char *token;
-    char **args = malloc(sizeof(char *) * maxArgument);
-
-    if (!args)
-    {
-        printError("malloc failed");
-    }
-
-    token = strtok(input, " ");
-    int count = 0;
-
-    while (token != NULL)
-    {
-        printf("Token is %s\n", token);
-        args[count++] = token;
-        if (count == maxArgument)
-            break;
-        token = strtok(NULL, " ");
-    }
-    args[count] = NULL;
-
-    return args;
 }
