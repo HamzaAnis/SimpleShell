@@ -45,7 +45,7 @@ void runCommand(char input[])
             pathLength++;
         }
         char *directoryPath = (char *)malloc(pathLength * sizeof(char));
-        strncpy(directoryPath, input + cdLength, pathLength - 1);
+        strncpy(directoryPath, input + cdLength, pathLength);
         // printf("Path is %s\n", directoryPath);
         if (chdir(directoryPath) == -1)
         {
@@ -64,7 +64,7 @@ void runCommand(char input[])
         {
             char numberArray[5];
             int historySize = strlen("history");
-            strncpy(numberArray, input + historySize + 1, strlen(input) - historySize - 2);
+            strncpy(numberArray, input + historySize + 1, strlen(input) - historySize - 1);
             // printf("A number is entered: %s\n", number);
             if (validateCharArray(numberArray) == 1)
             {
