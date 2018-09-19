@@ -1,44 +1,38 @@
 $/bin/ls
-main.c  main.o  Makefile  README  README.md  shell.c  shell.h  shell.o  test  w4118_sh  written.txt
+demo_run.txt      main.o     shell.c  test
+f18-tester-hmwk1  Makefile   shell.h  w4118_sh
+main.c            README.md  shell.o  written.txt
 $history
 0 /bin/ls
 1 history
-$cd test
-$history
-0 /bin/ls
-1 history
-2 cd test
-3 history
-$!his
-1 history
-3 history
-$!cd
-2 cd test
-$/bin/ls | /usr/bin/wc
-      11       11       90
+$cd /usr
 $!!
-$/bin/ls | /usr/bin/wc
-      11       11       90
 $history
 0 /bin/ls
 1 history
-2 cd test
-3 history
-4 /bin/ls
+2 cd /usr
+3 cd /usr
+4 history
+$/bin/ls | /usr/bin/wc
+      8       8      43
+$history
+0 /bin/ls
+1 history
+2 cd /usr
+3 cd /usr
+4 history
 5 /bin/ls | /usr/bin/wc
 6 history
 $history -c
+$/bin/echo Hello world
+Hello world
 $history
-7 history
-$/bin/pwd
-/home/ubuntu/SimpleShell/test
-$history 21
-7 history
-8 /bin/pwd
-$history 1
-7 history
-$!his
-7 history
-$!test
-error: test do not match any string in history
-$exit
+8 /bin/echo Hello world
+9 history
+$!/bin
+Hello world
+$history
+8 /bin/echo Hello world
+9 history
+10 /bin/echo Hello world
+11 history
