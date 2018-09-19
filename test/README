@@ -1,0 +1,14 @@
+Don't touch tester.py.
+
+Add your tests to homework_tests.py.
+
+Copy your w4118_sh file to this directory.
+
+Then run:
+
+python tester.py
+
+
+This testing script does not guarantee you will get a 100%
+on the homework 1. This script is intended to help you
+achieve a 100%.
