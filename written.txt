@@ -1,1 +1,92 @@
+bl2719 - Written Answers - Assignment 1
 
+1.6 Which of the following instructions should be privileged?
+a. Set value of timer. Yes
+b. Read the clock. No
+c. Clear memory. Yes
+d. Issue a trap instruction. No
+e. Turn off interrupts. Yes
+f. Modify entries in device-status table. Yes
+g. Switch from user to kernel mode. No
+h. Access I/O device. Yes
+
+The unprivileged instructions can be performed in user mode.
+
+----------------
+
+1.14 Under what circumstances would a user be better off using a timesharing
+system than a PC or a single-user workstation?
+
+When there is a large task to complete with fast hardware and only a few other 
+users, time-sharing makes sense. The full power of the system can be utilized 
+to focus on the user’s problem which will slove it faster than if it was performed 
+on a personal computer. Another example could be if there are a larger amount of
+other users who need resources simultaneously. A personal computer works best when 
+the job is reasonably small enough to be executed on it and when available performance 
+is sufficient to execute the program to the user’s satisfaction.
+
+----------------
+
+1.19 What is the purpose of interrupts? How does an interrupt differ from a
+trap? Can traps be generated intentionally by a user program? If so, for
+what purpose?
+
+Interrupts help the operating system to stop work on one process and start work on another 
+process using interrupt signals. The term "interrupts" usually refers to hardware interrupts 
+while "traps" are reserved for software-invoked "interrupts". Occurences of "interrupts" 
+disable other "interrupts" but the same is not true in the case of "traps". "Traps" can be 
+generated intentionally by a user's program because it is indentifed as a transfer of control, 
+initiated by the programming user. A user can use an 'int' instruction to initiate a "trap". 
+The "trap" is used to invoke kernal routine (which has a higher priority than user code).
+
+----------------
+
+1.27 Describe some of the challenges of designing operating systems for
+mobile devices compared with designing operating systems for traditional
+PCs.
+
+Challenges of designing mobile operating systems can include having less storage 
+capacity meaning the operating system must manage memory carefully, the operating system 
+also having the task of managing power consumption carefully, and the system having less 
+processing power (having fewer processors) meaning it must carefully appropriate
+processing power to applications as needed.
+
+----------------
+
+2.16 What are the advantages and disadvantages of using the same system call
+interface for manipulating both files and devices?
+
+Advantages of using the same system call interface include the ability to access aach 
+device though it was a file in the file system. Since most of the kernel deals with 
+devices through this file interface, it is easy to add a new device driver by implementing the
+hardware-specific code to support this abstract file interface. Therefore, this
+benefits the development of both user program code, which can be written to
+access devices and files in the same manner, and device driver code, which
+can be written to support a well-defined API. Disadvantages of using the 
+same interface include the fact that it may be difficult to capture the functionality of certain
+devices within the context of the file access API, resulting in a
+loss of functionality or a loss of performance. Some of this could be overcome
+by the use of ioctl operation that provides a general purpose interface for
+processes to invoke operations on devices. 
+
+----------------
+
+2.21 What is the main advantage of the microkernel approach to system
+design? How do user programs and system services interact in a
+microkernel architecture? What are the disadvantages of using the
+microkernel approach?
+
+The advantages of the microkernal approach include the ability to add a new service without
+requiring modifying the kernel, more security as operations
+are done in user mode than in kernel mode, and a simpler kernel
+design as functionality typically results in a more reliable operating
+system. 
+
+User programs and system services interact in a microkernel
+architecture by using interprocess communication mechanisms such as
+messaging. These messages are conveyed by the operating system. 
+
+The disadvantages of the microkernel approach are the overheads
+associated with interprocess communication and the frequent use of
+the operating system’s messaging functions in order to enable the user
+process and the system service to interact with each other.
