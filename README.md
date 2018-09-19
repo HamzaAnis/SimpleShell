@@ -17,10 +17,14 @@
 \---test                //Test cases
 ```
 
-### How to Compile
+### How to Compile and Run
 ```
 $ make
 $ ./w4118_sh
+```
+To clean
+```
+$ make clean
 ```
 
 #### Requirements
