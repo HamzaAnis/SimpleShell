@@ -29,12 +29,13 @@ void printHistoryString(char *string);
 void checkHistoryLimit();
 void clearHistory();
 void launchRecentCommand();
+void launchRecentCommandWithString(char *string);
 void freeMemory(char **history);
 int validateCharArray(char *numberArray);
 void printLimitedHistory(int count);
 int isExecutable(char *fielPath);
 void removeNewlineTrailing(char *string);
-void getCommands(struct commandLine *cmdL, char *cmd);
-void commandsExecute(char *cmd);
+void getCommands(struct commandLine *cmdL, char *input);
+void commandsExecute(struct commandLine *cmdL, char *input);
 void launchExecutable(struct command *cmd, int *fd, int index, int count);
 #endif //SHELL_H

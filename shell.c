@@ -24,6 +24,10 @@ void init()
 
 void runCommand(char input[])
 {
+    char *duplicate = strdup(input);
+    struct commandLine *cmdL = (struct commandLine *)calloc(1, sizeof(struct commandLine));
+    getCommands(cmdL, duplicate);
+
     if (strncmp(input, "exit", 4) == 0)
     {
         freeMemory(history);
@@ -55,28 +59,35 @@ void runCommand(char input[])
     }
     else if (strncmp(input, "history", 7) == 0)
     {
-        if (strncmp(input, "history -c", 9) == 0)
+        if (strncmp(input, "history -c", 10) == 0)
         {
             clearHistory();
             return;
         }
         else if ((int)strlen(input) > (int)strlen("history") + 1)
         {
-            char numberArray[5];
+            char numberArray[100];
             int historySize = strlen("history");
             strncpy(numberArray, input + historySize + 1, strlen(input) - historySize - 1);
-            // printf("A number is entered: %s\n", number);
             if (validateCharArray(numberArray) == 1)
             {
                 int count;
-                sscanf(numberArray, "%d", &count);
+                int flag = sscanf(numberArray, "%d", &count);
                 // printf("The number is %d\n", count);
-                printLimitedHistory(count);
+                if (flag != 1)
+                {
+                    printError("the number is not valid");
+                }
+                else
+                {
+                    printLimitedHistory(count);
+                }
             }
             else
             {
                 printError("the number is not valid");
             }
+            addToHistory(input);
             return;
         }
         addToHistory(input);
@@ -97,19 +108,21 @@ void runCommand(char input[])
         char *string = (char *)malloc(stringLength * sizeof(char));
         strncpy(string, input + 1, stringLength + 1);
         string[stringLength + 1] = '\0';
-        printHistoryString(string);
+        launchRecentCommandWithString(string);
     }
-    else
+    else if (isExecutable(cmdL->head->args[0]))
     {
         addToHistory(input);
         removeNewlineTrailing(input);
-        commandsExecute(input);
-        return;
-        //When the other command is entered
+        commandsExecute(cmdL, input);
+    }
+    else
+    {
         if (!(strcmp(input, "\n") == 0))
         {
             addToHistory(input);
         }
+        printError("no command found");
     }
 }
 
@@ -118,11 +131,40 @@ void launchRecentCommand()
     if (historyCount != 0)
     {
         // printf("Recent command was %s\n", history[historyCount - 1]);
-        printf("$%s\n", history[historyCount - 1]);
+        // printf("$%s\n", history[historyCount - 1]);
         runCommand(history[historyCount - 1]);
     }
     else
         printError("there is no commands in the history\n");
+}
+
+void launchRecentCommandWithString(char *string)
+{
+    if (historyCount != 0)
+    {
+        int i;
+        int commandNumber = initalCommandNumber;
+        int flag = 0;
+        for (i = historyCount - 1; i >= 0; i--)
+        {
+            if (strncmp(history[i], string, strlen(string)) == 0)
+            {
+                runCommand(history[i]);
+                flag = 1;
+            }
+            commandNumber++;
+        }
+        if (flag == 0)
+        {
+            char message[50];
+            sprintf(message, "%s do not match any string in history", string);
+            printError(message);
+        }
+    }
+    else
+    {
+        printError("there is no commands in the history\n");
+    }
 }
 
 void printError(char *message)
@@ -140,7 +182,7 @@ void addToHistory(char input[])
 
 void clearHistory()
 {
-    initalCommandNumber += historyCount;
+    initalCommandNumber += historyCount + 1;
     historyCount = 0;
 }
 
@@ -234,9 +276,9 @@ int validateCharArray(char *numberArray)
     return 1;
 }
 
-int isExecutable(char *filePath)
+int isExecutable(char *input)
 {
-    if ((access(filePath, X_OK) == 0) && (access(filePath, R_OK) == 0))
+    if ((access(input, X_OK) == 0) && (access(input, R_OK) == 0))
         return 1;
     else
         return 0;
@@ -284,13 +326,11 @@ void getCommands(struct commandLine *cmdL, char *input)
         command = strtok(input + loc, "|");
     }
 }
-void commandsExecute(char *input)
+void commandsExecute(struct commandLine *cmdL, char *input)
 {
     int i = 0;
     int *fd = NULL;
-    struct commandLine *cmdL = (struct commandLine *)calloc(1, sizeof(struct commandLine));
     struct command *cmd = NULL;
-    getCommands(cmdL, input);
     // printf("Count was %d\n", cmdL->count);
     if (cmdL->count > 1)
         fd = (int *)malloc(2 * sizeof(int) * (cmdL->count - 1));
